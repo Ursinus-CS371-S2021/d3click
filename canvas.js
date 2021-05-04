@@ -60,22 +60,34 @@ class Canvas2D {
 		
 	}
 
+	/**
+	 * Remove all of the points from the canvas
+	 */
 	clearPoints() {
 		d3.select(".points").remove();
 		this.points = this.canvas.append("g")
 		.attr("class", "points");
 	}
 
+	/**
+	 * Remove all of the line segments from the canvas
+	 */
 	clearLines() {
 		d3.select(".lines").remove();
 		this.lines = this.canvas.append("g")
 		.attr("class", "lines");
 	}
 
+	/**
+	 * Remove a particular point from the canvas
+	 */
 	removeNode() {
 		d3.select(this).remove();
 	}
 
+	/**
+	 * React to a mouse down event by adding a node
+	 */
 	mouseDown() {
 		let point = d3.mouse(d3.event.currentTarget);
 		this.points.append("circle")
@@ -83,7 +95,6 @@ class Canvas2D {
 			.attr("fill", d3.rgb(0, 0, 0))
 			.attr("cx", point[0])
 			.attr("cy", point[1])
-			.on("drag", this.dragNode)
 			.call(d3.drag()
 			.on("drag", this.dragNode)
 			)
