@@ -3,11 +3,14 @@ class Canvas2D {
 		this.container = document.getElementById("Canvas2DContainer");
 		this.canvas = d3.select("#Canvas2D");
 		this.canvas.on("mousedown", this.mouseDown.bind(this));
+		this.which = "X";
 
 		// Clear all graph elements if any exist
 		this.canvas.selectAll("*").remove();
-		this.points = this.canvas.append("g")
-		.attr("class", "points");
+		this.X = this.canvas.append("g")
+		.attr("class", "X");
+		this.Y = this.canvas.append("g")
+		.attr("class", "Y");
 		this.lines = this.canvas.append("g")
 		.attr("class", "lines");
 
@@ -23,13 +26,15 @@ class Canvas2D {
 	  * Return a list of points as a 2D array
 	  * @return A 2d array of the form [[x1, y1], [x2, y2], ...]
 	  */
-	getPoints() {
+	getPoints(which) {
 		let P = [];
 		d3.selectAll("circle").each(function() {
 			let sel = d3.select(this);
-			const x = parseFloat(sel.attr("cx"));
-			const y = parseFloat(sel.attr("cy"))
-			P.push([x, y]);
+			if (sel.attr("which") == which) {
+				const x = parseFloat(sel.attr("cx"));
+				const y = parseFloat(sel.attr("cy"))
+				P.push([x, y]);
+			}
 		});
 		return P;
 	}
@@ -64,9 +69,12 @@ class Canvas2D {
 	 * Remove all of the points from the canvas
 	 */
 	clearPoints() {
-		d3.select(".points").remove();
-		this.points = this.canvas.append("g")
-		.attr("class", "points");
+		d3.select(".X").remove();
+		d3.select(".Y").remove();
+		this.X = this.canvas.append("g")
+		.attr("class", "X");
+		this.Y = this.canvas.append("g")
+		.attr("class", "Y");
 	}
 
 	/**
@@ -90,11 +98,16 @@ class Canvas2D {
 	 */
 	mouseDown() {
 		let point = d3.mouse(d3.event.currentTarget);
-		this.points.append("circle")
+		let c = [0, 0, 200];
+		if (this.which == "Y") {
+			c = [0, 200, 0];
+		}
+		this.X.append("circle")
 			.attr("r", 5)
-			.attr("fill", d3.rgb(0, 0, 0))
+			.attr("fill", d3.rgb(c[0], c[1], c[2]))
 			.attr("cx", point[0])
 			.attr("cy", point[1])
+			.attr("which", this.which)
 			.call(d3.drag()
 			.on("drag", this.dragNode)
 			)
